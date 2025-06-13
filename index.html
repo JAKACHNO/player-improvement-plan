@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Reps Baseball Training</title>
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#111827">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, .font-teko {
+            font-family: 'Teko', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .sidebar-btn.active {
+            background-color: #facc15; /* yellow-400 */
+            color: #111827; /* gray-900 */
+        }
+        .task-checkbox:checked {
+            background-color: #facc15;
+            border-color: #facc15;
+        }
+        .task-checkbox:checked + .task-name {
+            text-decoration: line-through;
+            color: #9ca3af; 
+        }
+        .log-input {
+            width: 65px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="flex h-screen bg-gray-900 text-white">
+        <!-- Sidebar -->
+        <aside class="w-20 sm:w-64 bg-black flex-shrink-0">
+            <div class="p-4 sm:p-6 flex flex-col h-full">
+                <div class="flex items-center justify-center sm:justify-start mb-10">
+                    <img src="https://i.imgur.com/2s4oYt3.png" alt="SYB REPS Logo" class="w-12 h-12 rounded-md object-contain">
+                    <h1 class="text-3xl font-bold ml-2 hidden sm:block text-yellow-400">JACKS REPS</h1>
+                </div>
+                <nav class="flex flex-col space-y-2">
+                    <button id="viewWorkoutBtn" class="sidebar-btn w-full flex items-center justify-center sm:justify-start p-3 rounded-lg text-gray-300 hover:bg-gray-800 transition-colors">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
+                        <span class="ml-4 hidden sm:inline">Workout</span>
+                    </button>
+                    <button id="viewLogBtn" class="sidebar-btn w-full flex items-center justify-center sm:justify-start p-3 rounded-lg text-gray-300 hover:bg-gray-800 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span class="ml-4 hidden sm:inline">Results Log</span>
+                    </button>
+                     <button id="viewMeasurablesBtn" class="sidebar-btn w-full flex items-center justify-center sm:justify-start p-3 rounded-lg text-gray-300 hover:bg-gray-800 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        <span class="ml-4 hidden sm:inline">Measurables</span>
+                    </button>
+                    <button id="viewProfileBtn" class="sidebar-btn w-full flex items-center justify-center sm:justify-start p-3 rounded-lg text-gray-300 hover:bg-gray-800 transition-colors">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                        <span class="ml-4 hidden sm:inline">Player Profile</span>
+                    </button>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
+                <div class="container mx-auto px-6 py-8">
+                    
+                    <!-- Header -->
+                    <header class="mb-8">
+                        <h2 class="text-4xl text-gray-800 font-bold">Player Improvement Plan</h2>
+                        <div id="mainHeader" class="mt-4">
+                            <!-- Populated by JS -->
+                        </div>
+                    </header>
+                    
+                    <!-- Controls -->
+                    <div id="workoutControls" class="mb-8">
+                         <div class="bg-white p-4 rounded-xl shadow-lg">
+                             <label for="weekSelector" class="font-semibold text-gray-700 mr-2">Current Week:</label>
+                             <select id="weekSelector" class="p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-yellow-400 focus:border-yellow-400 text-gray-800"></select>
+                             <div class="mt-2 w-full bg-gray-300 rounded-full h-2.5">
+                                 <div id="weekProgressBar" class="bg-yellow-400 h-2.5 rounded-full" style="width: 12.5%"></div>
+                             </div>
+                             <nav id="daySelector" class="flex flex-wrap justify-start gap-2 sm:gap-4 mt-4">
+                                 <!-- Day buttons will be generated here -->
+                             </nav>
+                        </div>
+                    </div>
+
+                    <!-- Content Area -->
+                    <div id="contentArea">
+                        <main id="workoutDisplay" class="space-y-6">
+                            <!-- Workout content -->
+                        </main>
+                        <div id="logDisplay" class="hidden space-y-6">
+                            <!-- Log content -->
+                        </div>
+                        <div id="measurablesDisplay" class="hidden space-y-6">
+                             <div class="bg-white text-gray-800 rounded-xl shadow-lg p-6">
+                                <h2 class="text-3xl font-bold mb-4 text-center">Track Your Measurables</h2>
+                                <p class="mb-6 text-gray-600 text-center">Log your key metrics periodically (e.g., once a week) to see your progress.</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="batSpeed" class="block text-sm font-medium text-gray-700">Bat Speed (mph)</label>
+                                        <input type="number" id="batSpeed" class="mt-1 p-2 w-full border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label for="exitVelo" class="block text-sm font-medium text-gray-700">Exit Velocity (mph)</label>
+                                        <input type="number" id="exitVelo" class="mt-1 p-2 w-full border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label for="throwVelo" class="block text-sm font-medium text-gray-700">Throwing Velocity (mph)</label>
+                                        <input type="number" id="throwVelo" class="mt-1 p-2 w-full border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label for="sprintTime" class="block text-sm font-medium text-gray-700">60-Yard Dash (seconds)</label>
+                                        <input type="number" step="0.01" id="sprintTime" class="mt-1 p-2 w-full border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label for="maxThrowDistance" class="block text-sm font-medium text-gray-700">Max Throwing Distance (feet)</label>
+                                        <input type="number" id="maxThrowDistance" class="mt-1 p-2 w-full border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label for="handSpeed" class="block text-sm font-medium text-gray-700">Hand Speed (mph)</label>
+                                        <input type="number" id="handSpeed" class="mt-1 p-2 w-full border border-gray-300 rounded-lg">
+                                    </div>
+                                </div>
+                                <button id="saveMeasurablesBtn" class="mt-6 w-full bg-yellow-400 text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-500 transition-colors">Save Measurables</button>
+                            </div>
+                            <div id="measurablesLog" class="mt-8"></div>
+                        </div>
+                        <div id="profileDisplay" class="hidden space-y-6">
+                            <!-- Profile content -->
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- DATA ---
+            const createWeeklyPlan = (weekNum) => {
+                const progression = weekNum - 1; 
+                return {
+                    "Day 1": { day: "Monday", time: "7:00 AM", title: "Full Body Strength & Hitting", sections: [ { title: "Warm-up", tasks: [ { name: "Jumping Jacks", guideline: "2 minutes to get the blood flowing." }, { name: "Leg Swings (Forward & Side)", guideline: "10 each leg, each direction. Controlled swings.", videoQuery: "Leg Swings Dynamic Warm Up" }, { name: "Torso Twists", guideline: "20 reps total. Keep your feet planted.", videoQuery: "Torso Twists Dynamic Stretch" }, { name: "Arm Circles", guideline: "10 forward, 10 backward. Small and large circles." } ] }, { title: "Full Body Strength", tasks: [ { name: "Goblet Squats", reps: `3x${10 + Math.floor(progression/4)*2}`, guideline: "Keep your chest up, back straight, and go as low as comfortable.", trackers: ['Sets', 'Reps', 'Weight'], videoQuery: "How to Do a Goblet Squat — The RIGHT Way! ScottHermanFitness" }, { name: "Push-ups", reps: '3xMax', guideline: "Maintain a straight line from head to heels. Lower your chest to the floor.", trackers: ['Sets', 'Reps', 'Notes'], videoQuery: "How To: Perfect Push-Up | 3 Common Mistakes Bowflex" }, { name: "Dumbbell Rows", reps: `3x${10 + Math.floor(progression/4)*2}`, guideline: "Pull the weight towards your hip, squeezing your back muscles.", trackers: ['Sets', 'Reps', 'Weight'], videoQuery: "How To: Dumbbell Row (The RIGHT Way!) ScottHermanFitness" }, { name: "Plank", reps: `3x${45 + progression*2}s`, guideline: "Keep your core tight and your back flat. Don't let your hips sag.", trackers: ['Sets', 'Time', 'Notes'], videoQuery: "How to Do a Plank Correctly OfficialThenx" } ]}, { title: "Hitting Drills (45 mins)", tasks: [ { name: "Contact Point Tee Drill", reps: '3 Rounds of 10 Swings', guideline: "Focus on hitting the inside, middle, and outside part of the ball.", trackers: ['Rounds', 'Swings', 'Notes'], videoQuery: "The 5 Hitting Locations - Baseball Hitting Drill Antonelli Baseball" }, { name: "High & Low Tee Drill", reps: '2 Rounds of 10 Swings (each height)', guideline: "Adjust your body to the pitch height, not just your arms.", trackers: ['Rounds', 'Swings', 'Notes'], videoQuery: "HIGH TEE LOW TEE Hitting Drill TopVelocity" }, { name: "One-Handed Drills", reps: '2 Rounds of 8 Swings (each hand)', guideline: "Control the bat path with your lead hand (top) and power with your bottom hand.", trackers: ['Rounds', 'Swings', 'Notes'], videoQuery: "Baseball Hitting Drills: One-Hand Swings YouGoPro Baseball" } ]}, { title: "Cool-down", tasks: [ { name: "Quad Stretch", guideline: "Hold for 30 seconds each leg.", videoQuery: "How to Do a Quad Stretch" }, { name: "Hamstring Stretch", guideline: "Hold for 30 seconds each leg. Don't bounce.", videoQuery: "How to Do a Hamstring Stretch" }] } ] },
+                    "Day 2": { day: "Wednesday", time: "6:00 PM", title: "Power, Speed & Fielding", sections: [ { title: "Warm-up", tasks: [ { name: "High Knees", guideline: "30 seconds, focus on height." }, { name: "Butt Kicks", guideline: "30 seconds, focus on speed." }, { name: "Walking Hip Openers", guideline: "10 reps each leg. Open the 'gate' out and in.", videoQuery: "Gate Openers Dynamic Stretch" } ] }, { title: "Power & Agility", tasks: [ { name: "Medicine Ball Slams", reps: `3x${10 + progression}`, guideline: "Use your whole body, slam the ball down with force.", trackers: ['Sets', 'Reps'], videoQuery: "How to do a Medicine Ball Slam ScottHermanFitness" }, { name: "Box Jumps", reps: `3x${8 + Math.floor(progression/2)}`, guideline: "Land softly on the box, like a cat. Step down, don't jump down.", trackers: ['Sets', 'Reps'], videoQuery: "How To Box Jump Correctly Alex Bunt Training" }, { name: "Sprints", reps: `${4 + Math.floor(progression/2)} reps of 30-yards`, guideline: "Focus on explosive starts and driving your knees. Full recovery between reps.", trackers: ['Reps', 'Distance', 'Notes'], videoQuery: "how to sprint faster for baseball" }, { name: "Ickey Shuffle", reps: '3 reps thru', guideline: "Quick feet, two in, one out. Keep your hips low.", trackers: ['Sets', 'Notes'], videoQuery: "Ickey Shuffle Agility Ladder Drill" } ]}, { title: "Fielding & Throwing Drills", tasks: [ { name: "Short-Hop Drills", reps: '3 Rounds of 15 Reps', guideline: "Keep your glove out front and your eyes on the ball through the catch.", trackers: ['Rounds', 'Reps', 'Notes'], videoQuery: "Two Must-Do Drills for Softer Hands Heads-Up Baseball" }, { name: "Four-Corner Throwing", reps: '3 Rounds of 12 throws', guideline: "Focus on a consistent arm slot and hitting your partner's chest.", trackers: ['Rounds', 'Throws', 'Notes'], videoQuery: "youth baseball throwing drills for accuracy" } ]}, { title: "Cool-down", tasks: [ { name: "Pigeon Pose", guideline: "30 seconds each side. Stretches hips.", videoQuery: "How to do Pigeon Pose" }] } ] },
+                    "Day 3": { day: "Friday", time: "6:00 PM", title: "Hitting - Swing Speed Focus", sections: [ { title: "Warm-up", tasks: [{ name: "Rotational & Hip Mobility Warm-up", guideline: "Focus on opening up your hips and rotating your core.", videoQuery: "Best Dynamic Warm-Up for Golfers and Rotational Sports Golf Aggressive" }] }, { title: "Rotational Power Activation", tasks: [ { name: "Medicine Ball Rotational Throws", reps: `3x${8 + progression}`, guideline: "Generate power from your hips and core, not just your arms.", trackers: ['Sets', 'Reps', 'Notes'], videoQuery: "How To Perform The Rotational Medicine Ball Throw For Power ScottHermanFitness" }, { name: "Tidal Tank Rotational Lunges", reps: '3x8 each side', guideline: "Control the water's momentum as you lunge and rotate.", trackers: ['Sets', 'Reps', 'Notes'], videoQuery: "Tidal Tank Rotational Lunge" } ]}, { title: "Swing Speed Protocol", tasks: [ { name: "Game Bat Warm-up (10 swings)", guideline: "Swing with 100% intent on the light bat and game bat swings. Feel the speed.", trackers:['Notes'], videoQuery: null } ]}, { title: "Cool-down", tasks: [{ name: "Kneeling Torso Twist", guideline: "30 seconds each side. Gentle rotation.", videoQuery: "Seated Torso Twist" }] } ] },
+                    "Day 4": { day: "Saturday", time: "10:00 AM", title: "Arm Care, Long Toss & Skill Application", sections: [ { title: "Warm-up", tasks: [ { name: "Arm Circles", guideline: "10 forward, 10 back (small and large)." } ] }, { title: "Arm Care Activation", tasks: [ { name: "Resistance Band Routine", guideline: "Perform slow, controlled movements to activate the shoulder.", trackers:['Notes'], videoQuery: "Increase Pitching Velocity with J-Bands Jaeger Sports" } ]}, { title: "Long Toss Routine", tasks: [ { name: "Warm-up Throws", reps: `15 throws at ${60 + progression * 5} ft`, guideline: "Start close and focus on a clean four-seam grip and good mechanics.", trackers:['Throws', 'Notes'], videoQuery: "Thrive on Throwing 2 - The Jaeger Sports Program Jaeger Sports" } ]}, { title: "Hitting Drills", tasks: [{ name: "Soft Toss", reps: `Approx. ${50 + progression * 5} swings`, guideline: "Focus on rhythm, timing, and making solid contact.", trackers: ['Swings', 'Notes'], videoQuery: "SOFT TOSS - Do it the RIGHT way! The Baseball Doctor" }] }, { title: "Cool-down", tasks: [ { name: "Sleeper Stretch", guideline: "30 seconds each arm. VERY GENTLE stretch for the back of the shoulder.", videoQuery: "Sleeper Stretch for Pitchers" } ] } ] }
+                }
+            };
+            const trainingPlanWeeks = Array.from({ length: 8 }, (_, i) => createWeeklyPlan(i + 1));
+            let currentWeekIndex = 0;
+            let currentDayKey = "Day 1";
+            
+            // --- DOM ELEMENTS ---
+            const mainHeader = document.getElementById('mainHeader');
+            const daySelector = document.getElementById('daySelector');
+            const workoutDisplay = document.getElementById('workoutDisplay');
+            const logDisplay = document.getElementById('logDisplay');
+            const measurablesDisplay = document.getElementById('measurablesDisplay');
+            const profileDisplay = document.getElementById('profileDisplay');
+            const workoutControls = document.getElementById('workoutControls');
+            const weekSelector = document.getElementById('weekSelector');
+            const progressBar = document.getElementById('weekProgressBar');
+            const viewWorkoutBtn = document.getElementById('viewWorkoutBtn');
+            const viewLogBtn = document.getElementById('viewLogBtn');
+            const viewMeasurablesBtn = document.getElementById('viewMeasurablesBtn');
+            const viewProfileBtn = document.getElementById('viewProfileBtn');
+            
+            // --- FUNCTIONS ---
+            const createYouTubeSearchURL = (query) => `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+            
+            const renderWorkout = (weekIndex, dayKey) => {
+                currentWeekIndex = weekIndex;
+                currentDayKey = dayKey;
+                const workout = JSON.parse(JSON.stringify(trainingPlanWeeks[weekIndex][dayKey]));
+                workoutDisplay.innerHTML = '';
+                document.querySelectorAll('.day-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.day === dayKey));
+                
+                const workoutHeader = document.createElement('h2');
+                workoutHeader.className = 'text-3xl font-bold text-gray-800 font-teko mb-6';
+                workoutHeader.textContent = workout.title;
+                workoutDisplay.appendChild(workoutHeader);
+                
+                workout.sections.forEach((section) => {
+                    const sectionCard = document.createElement('div');
+                    sectionCard.className = 'bg-white text-gray-800 rounded-xl shadow-lg p-6 mb-6';
+                    sectionCard.innerHTML = `<h3 class="text-2xl font-bold text-gray-800 font-teko mb-4 border-b border-gray-200 pb-2">${section.title}</h3>`;
+                    const taskList = document.createElement('ul');
+                    taskList.className = 'space-y-4';
+                    section.tasks.forEach((task) => {
+                        const taskItem = document.createElement('li');
+                        let guideButtonHTML = task.videoQuery ? `<a href="${createYouTubeSearchURL(task.videoQuery)}" target="_blank" class="ml-4 px-3 py-1 bg-yellow-400 text-gray-900 text-sm font-bold rounded-md hover:bg-yellow-500 transition-colors shrink-0">Guide</a>` : '';
+                        let guidelineHTML = task.guideline ? `<p class="text-sm italic text-gray-500 mt-1">${task.guideline}</p>` : '';
+
+                        if (section.title.toLowerCase().includes('warm-up') || section.title.toLowerCase().includes('cool-down')) {
+                            taskItem.className = 'flex items-center justify-between gap-2';
+                            taskItem.innerHTML = `<div class="flex-grow"><span class="font-semibold">${task.name}</span>${guidelineHTML}</div>${guideButtonHTML || ''}`;
+                        } else {
+                            taskItem.className = 'trackable-task flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2';
+                            let inputHTML = task.trackers ? task.trackers.map(p => `<input type="text" placeholder="${p}" class="log-input border border-gray-300 rounded-md p-1">`).join('') : '';
+                            taskItem.innerHTML = `<div class="flex items-start flex-grow"><input type="checkbox" class="task-checkbox h-5 w-5 rounded border-gray-400 text-yellow-400 focus:ring-yellow-400 mr-4 shrink-0 mt-1"><div class="w-full"><div class="flex justify-between w-full"><label class="task-name font-semibold">${task.name} <span class="text-sm text-gray-500 font-normal">${task.reps || ''}</span></label></div>${guidelineHTML}</div></div><div class="flex items-center gap-2 pl-9 sm:pl-0">${inputHTML}${guideButtonHTML || ''}</div>`;
+                        }
+                        taskList.appendChild(taskItem);
+                    });
+                    sectionCard.appendChild(taskList);
+                    workoutDisplay.appendChild(sectionCard);
+                });
+                const saveButton = document.createElement('button');
+                saveButton.textContent = "Save Today's Workout";
+                saveButton.className = "mt-6 w-full bg-yellow-400 text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-500 transition-colors";
+                saveButton.addEventListener('click', saveWorkoutData);
+                workoutDisplay.appendChild(saveButton);
+            };
+
+            const renderLog = (logKey, displayElement, title) => {
+                displayElement.innerHTML = `<h2 class="text-3xl font-bold text-gray-800 font-teko mb-6 text-center">${title}</h2>`;
+                const logs = JSON.parse(localStorage.getItem(logKey)) || [];
+                if (logs.length === 0) {
+                    displayElement.innerHTML += `<div class="bg-white p-6 rounded-lg shadow-md text-center"><p class="text-gray-600">No data saved yet.</p></div>`;
+                    return;
+                }
+                logs.forEach(log => {
+                    const logCard = document.createElement('div');
+                    logCard.className = 'bg-white text-gray-800 rounded-xl shadow-lg p-6 mb-4';
+                    let entriesHTML = '';
+                    if (log.tasks) { // Workout log
+                        entriesHTML = log.tasks.map(task => {
+                            const dataEntries = Object.entries(task.data).map(([key, value]) => `${key}: ${value}`).join(', ');
+                            return `<li class="flex justify-between items-center text-sm py-1 border-b border-gray-200"><span class="${task.completed ? 'line-through text-gray-500' : ''}">${task.name}</span><span class="text-right text-gray-600">${dataEntries}</span></li>`;
+                        }).join('');
+                    } else { // Measurables log
+                        entriesHTML = Object.entries(log.data).map(([key, value]) => `<li class="flex justify-between items-center text-sm py-1 border-b border-gray-200"><span class="capitalize font-medium text-gray-700">${key.replace(/([A-Z])/g, ' $1')}</span><span class="text-right font-semibold">${value}</span></li>`).join('');
+                    }
+
+                    logCard.innerHTML = `<div class="flex justify-between items-center pb-2 mb-2"><h3 class="font-bold text-xl font-teko">${log.dayTitle || 'Measurables'}</h3><p class="text-sm text-gray-500">${log.date}</p></div><ul class="">${entriesHTML}</ul>`;
+                    displayElement.appendChild(logCard);
+                });
+            };
+
+            const createDayButtons = () => {
+                daySelector.innerHTML = '';
+                Object.keys(trainingPlanWeeks[currentWeekIndex]).forEach(dayKey => {
+                    const button = document.createElement('button');
+                    button.className = 'day-btn px-4 py-2 text-sm sm:text-base font-semibold text-gray-700 bg-gray-300 rounded-lg shadow-sm hover:bg-gray-400 transition-colors';
+                    button.textContent = trainingPlanWeeks[currentWeekIndex][dayKey].day;
+                    button.dataset.day = dayKey;
+                    button.addEventListener('click', () => renderWorkout(currentWeekIndex, dayKey));
+                    daySelector.appendChild(button);
+                });
+            };
+
+            const saveWorkoutData = () => {
+                const logs = JSON.parse(localStorage.getItem('workoutLogs')) || [];
+                const today = new Date();
+                const workoutLog = { date: today.toLocaleDateString(), timestamp: today.getTime(), dayTitle: `Week ${currentWeekIndex + 1}: ${trainingPlanWeeks[currentWeekIndex][currentDayKey].title}`, tasks: [] };
+                document.querySelectorAll('.trackable-task').forEach(item => {
+                    const taskName = item.querySelector('.task-name').textContent;
+                    const inputs = item.querySelectorAll('input.log-input');
+                    const completed = item.querySelector('.task-checkbox').checked;
+                    const data = {};
+                    inputs.forEach(input => { if (input.value) { data[input.placeholder] = input.value; } });
+                    if (completed || Object.keys(data).length > 0) {
+                        workoutLog.tasks.push({ name: taskName, completed: completed, data: data });
+                    }
+                });
+                if (workoutLog.tasks.length > 0) {
+                    logs.unshift(workoutLog);
+                    localStorage.setItem('workoutLogs', JSON.stringify(logs));
+                    alert('Workout Saved!');
+                    showView('log');
+                } else {
+                    alert('No data entered to save.');
+                }
+            };
+
+            const saveMeasurablesData = () => {
+                const logs = JSON.parse(localStorage.getItem('measurablesLog')) || [];
+                const today = new Date();
+                const data = {
+                    batSpeed: document.getElementById('batSpeed').value,
+                    exitVelo: document.getElementById('exitVelo').value,
+                    throwVelo: document.getElementById('throwVelo').value,
+                    sprintTime: document.getElementById('sprintTime').value,
+                    maxThrowDistance: document.getElementById('maxThrowDistance').value,
+                    handSpeed: document.getElementById('handSpeed').value,
+                };
+                if (Object.values(data).some(val => val !== '')) {
+                    logs.unshift({ date: today.toLocaleDateString(), timestamp: today.getTime(), data: data });
+                    localStorage.setItem('measurablesLog', JSON.stringify(logs));
+                    alert('Measurables Saved!');
+                    renderLog('measurablesLog', document.getElementById('measurablesLog'), 'Measurables History');
+                    Object.keys(data).forEach(key => document.getElementById(key).value = '');
+                } else {
+                    alert('Please enter at least one value to save.');
+                }
+            };
+            
+            const runApp = (userData) => {
+                mainHeader.innerHTML = `<h3 class="text-2xl text-gray-700">Welcome, <span class="font-bold text-yellow-400">${userData.name}</span>! Let's get to work.</h3>`;
+                populateWeekSelector();
+                createDayButtons();
+                showView('workout');
+            };
+
+            const populateWeekSelector = () => {
+                for (let i = 1; i <= 8; i++) {
+                    weekSelector.innerHTML += `<option value="${i-1}">Week ${i}</option>`;
+                }
+                weekSelector.addEventListener('change', (e) => {
+                    const newWeekIndex = parseInt(e.target.value);
+                    progressBar.style.width = `${(newWeekIndex + 1) / 8 * 100}%`;
+                    renderWorkout(newWeekIndex, currentDayKey);
+                });
+            };
+            
+            const showView = (view) => {
+                const viewBtns = [viewWorkoutBtn, viewLogBtn, viewMeasurablesBtn, viewProfileBtn];
+                const displays = [workoutDisplay, logDisplay, measurablesDisplay, profileDisplay];
+                const controls = [workoutControls];
+
+                viewBtns.forEach(btn => btn.classList.remove('active'));
+                displays.forEach(d => d.classList.add('hidden'));
+                controls.forEach(c => c.classList.add('hidden'));
+
+                if (view === 'log') {
+                    logDisplay.classList.remove('hidden');
+                    viewLogBtn.classList.add('active');
+                    renderLog('workoutLogs', logDisplay, 'Results Log');
+                } else if (view === 'measurables') {
+                    measurablesDisplay.classList.remove('hidden');
+                    viewMeasurablesBtn.classList.add('active');
+                    renderLog('measurablesLog', document.getElementById('measurablesLog'), 'Measurables History');
+                } else if(view === 'profile') {
+                    profileDisplay.classList.remove('hidden');
+                    viewProfileBtn.classList.add('active');
+                    renderProfile();
+                } else { // workout view
+                    workoutControls.classList.remove('hidden');
+                    workoutDisplay.classList.remove('hidden');
+                    viewWorkoutBtn.classList.add('active');
+                    renderWorkout(currentWeekIndex, currentDayKey);
+                }
+            };
+            
+            const renderProfile = () => {
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                profileDisplay.innerHTML = '';
+
+                if (userData) {
+                    const displayHTML = `
+                        <div class="bg-white text-gray-800 rounded-xl shadow-lg p-6">
+                             <h2 class="text-3xl font-bold mb-4 text-center">Player Profile</h2>
+                             <div class="grid grid-cols-2 gap-4 text-lg">
+                                <div class="font-semibold text-gray-500">Name:</div><div>${userData.name}</div>
+                                <div class="font-semibold text-gray-500">Age:</div><div>${userData.age}</div>
+                                <div class="font-semibold text-gray-500">Height:</div><div>${userData.height}</div>
+                                <div class="font-semibold text-gray-500">Weight:</div><div>${userData.weight} lbs</div>
+                                <div class="font-semibold text-gray-500">Position:</div><div>${userData.position}</div>
+                                <div class="font-semibold text-gray-500">Bats:</div><div>${userData.hitting}</div>
+                                <div class="font-semibold text-gray-500">Throws:</div><div>${userData.throwing}</div>
+                                <div class="font-semibold text-gray-500">Email:</div><div>${userData.email}</div>
+                                <div class="font-semibold text-gray-500">Location:</div><div>${userData.location}</div>
+                             </div>
+                             <button id="editProfileBtn" class="mt-6 w-full bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition-colors">Edit Profile</button>
+                        </div>
+                    `;
+                    profileDisplay.innerHTML = displayHTML;
+                    document.getElementById('editProfileBtn').addEventListener('click', () => renderProfileForm(userData));
+                } else {
+                    renderProfileForm();
+                }
+            };
+            
+            const renderProfileForm = (existingData = {}) => {
+                profileDisplay.innerHTML = '';
+                 const formHTML = `
+                     <div class="bg-white text-gray-800 rounded-xl shadow-lg p-6">
+                         <h2 class="text-3xl font-bold mb-4 text-center">Create / Edit Profile</h2>
+                         <form id="profileForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <input required type="text" id="profileName" placeholder="Player Name" class="col-span-1 sm:col-span-2 p-2 border border-gray-300 rounded-lg" value="${existingData.name || ''}">
+                            <select required id="profileAge" class="p-2 border border-gray-300 rounded-lg"></select>
+                            <div class="flex gap-2">
+                                <select required id="profileHeightFeet" class="w-1/2 p-2 border border-gray-300 rounded-lg"></select>
+                                <select required id="profileHeightInches" class="w-1/2 p-2 border border-gray-300 rounded-lg"></select>
+                            </div>
+                            <select required id="profileWeight" class="p-2 border border-gray-300 rounded-lg"></select>
+                             <select required id="profilePosition" class="p-2 border border-gray-300 rounded-lg">
+                                 <option value="" disabled>Position</option>
+                                 <option value="Pitcher">Pitcher</option>
+                                 <option value="Catcher">Catcher</option>
+                                 <option value="First Baseman">First Baseman</option>
+                                 <option value="Second Baseman">Second Baseman</option>
+                                 <option value="Third Baseman">Third Baseman</option>
+                                 <option value="Shortstop">Shortstop</option>
+                                 <option value="Left Fielder">Left Fielder</option>
+                                 <option value="Center Fielder">Center Fielder</option>
+                                 <option value="Right Fielder">Right Fielder</option>
+                             </select>
+                            <select required id="profileHitting" class="p-2 border border-gray-300 rounded-lg">
+                                <option value="" disabled>Hitting</option>
+                                <option value="Right">Right</option>
+                                <option value="Left">Left</option>
+                                <option value="Switch">Switch</option>
+                            </select>
+                            <select required id="profileThrowing" class="p-2 border border-gray-300 rounded-lg">
+                                <option value="" disabled>Throwing</option>
+                                <option value="Right">Right</option>
+                                <option value="Left">Left</option>
+                            </select>
+                            <input required type="email" id="profileEmail" placeholder="Email Address" class="col-span-1 sm:col-span-2 p-2 border border-gray-300 rounded-lg" value="${existingData.email || ''}">
+                            <input required type="text" id="profileLocation" placeholder="City, State" class="col-span-1 sm:col-span-2 p-2 border border-gray-300 rounded-lg" value="${existingData.location || ''}">
+                            <button type="submit" class="col-span-1 sm:col-span-2 w-full bg-yellow-400 text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-500 transition-colors">Save Profile</button>
+                         </form>
+                     </div>
+                 `;
+                 profileDisplay.innerHTML = formHTML;
+
+                const ageSelect = document.getElementById('profileAge');
+                const heightFeetSelect = document.getElementById('profileHeightFeet');
+                const heightInchesSelect = document.getElementById('profileHeightInches');
+                const weightSelect = document.getElementById('profileWeight');
+                ageSelect.innerHTML = '<option value="" disabled selected>Age</option>';
+                for (let i = 8; i <= 18; i++) { ageSelect.innerHTML += `<option value="${i}">${i}</option>`; }
+                heightFeetSelect.innerHTML = '<option value="" disabled selected>Feet</option>';
+                for (let i = 4; i <= 6; i++) { heightFeetSelect.innerHTML += `<option value="${i}">${i}'</option>`; }
+                heightInchesSelect.innerHTML = '<option value="" disabled selected>Inches</option>';
+                for (let i = 0; i <= 11; i++) { heightInchesSelect.innerHTML += `<option value="${i}">${i}"</option>`; }
+                weightSelect.innerHTML = '<option value="" disabled selected>Weight</option>';
+                for (let i = 60; i <= 220; i += 5) { weightSelect.innerHTML += `<option value="${i}">${i} lbs</option>`; }
+                
+                if (existingData.age) ageSelect.value = existingData.age;
+                if (existingData.weight) weightSelect.value = existingData.weight;
+                if (existingData.height) {
+                    const [feet, inches] = existingData.height.split("' ");
+                    heightFeetSelect.value = feet;
+                    heightInchesSelect.value = inches.replace('"', '');
+                }
+                document.getElementById('profilePosition').value = existingData.position || "";
+                document.getElementById('profileHitting').value = existingData.hitting || "";
+                document.getElementById('profileThrowing').value = existingData.throwing || "";
+
+                 document.getElementById('profileForm').addEventListener('submit', (e) => {
+                     e.preventDefault();
+                     const feet = document.getElementById('profileHeightFeet').value;
+                     const inches = document.getElementById('profileHeightInches').value;
+                     const updatedUserData = {
+                         name: document.getElementById('profileName').value,
+                         age: document.getElementById('profileAge').value,
+                         height: `${feet}' ${inches}"`,
+                         weight: document.getElementById('profileWeight').value,
+                         position: document.getElementById('profilePosition').value,
+                         hitting: document.getElementById('profileHitting').value,
+                         throwing: document.getElementById('profileThrowing').value,
+                         email: document.getElementById('profileEmail').value,
+                         location: document.getElementById('profileLocation').value,
+                     };
+                     localStorage.setItem('userData', JSON.stringify(updatedUserData));
+                     alert('Profile Saved!');
+                     document.getElementById('mainHeader').innerHTML = `<h3 class="text-2xl text-gray-700">Welcome, <span class="font-bold text-yellow-400">${updatedUserData.name}</span>! Let's get to work.</h3>`;
+                     showView('workout');
+                 });
+            };
+
+            // --- EVENT LISTENERS ---
+            viewWorkoutBtn.addEventListener('click', () => showView('workout'));
+            viewLogBtn.addEventListener('click', () => showView('log'));
+            viewMeasurablesBtn.addEventListener('click', () => showView('measurables'));
+            viewProfileBtn.addEventListener('click', () => showView('profile'));
+            saveMeasurablesBtn.addEventListener('click', saveMeasurablesData);
+            
+            // --- INITIAL STARTUP ---
+            const initialUserData = JSON.parse(localStorage.getItem('userData'));
+            if(initialUserData) {
+                runApp(initialUserData);
+            } else {
+                renderProfileForm();
+                showView('profile');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "Jacks Reps Baseball Training",
+  "short_name": "Jacks Reps",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#facc15",
+  "description": "A dynamic training plan for baseball players.",
+  "icons": [
+    {
+      "src": "https://i.imgur.com/bGe2YxS.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.imgur.com/bGe2YxS.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
